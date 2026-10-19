@@ -1,0 +1,37 @@
+name: 'FastFront Deploy'
+description: 'Deploy a static folder to FastFront'
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'
+inputs:
+  folder:
+    description: 'Folder that should be deployed'
+    required: true
+  environment:
+    description: 'Key of the stage to deploy to. Defaults to a URL-compatible version of the branch or tag name'
+    required: false
+    default: ''
+  api_key:
+    description: 'FastFront project (p_...) or stage (s_...) API key'
+    required: true
+  timeout:
+    description: 'How long to wait for the deployment to finish, e.g. 10m'
+    required: false
+    default: '10m'
+outputs:
+  deployment_id:
+    description: 'ID of the created deployment'
+  stage:
+    description: 'Stage key that was deployed to'
+  url:
+    description: 'URL of the first hostname of the stage, if any'
+runs:
+  using: 'docker'
+  image: 'docker://ghcr.io/fastfront-io/cli:0.0.1'
+  args:
+    - deploy
+    - ${{ inputs.folder }}
+    - ${{ inputs.environment }}
+    - --timeout=${{ inputs.timeout }}
+  env:
+    FASTFRONT_API_KEY: ${{ inputs.api_key }}
